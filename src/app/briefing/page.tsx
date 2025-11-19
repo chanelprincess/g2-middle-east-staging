@@ -113,7 +113,6 @@ export default async function BriefingPage() {
             ))}
           </div>
         )}
-        </div>
 
         {/* API Access Note */}
         <div className="mt-16 max-w-5xl mx-auto">

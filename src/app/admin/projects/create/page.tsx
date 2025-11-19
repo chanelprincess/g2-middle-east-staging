@@ -1,12 +1,10 @@
 'use client';
 
-import { useState, FormEvent, ChangeEvent } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { uploadSecureAsset, formatFileSize, validateFileSize } from '@/utils/storage';
-
-export const dynamic = 'force-dynamic';
 
 interface Client {
   id: string;
@@ -41,9 +39,10 @@ export default function CreateProjectPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  useState(() => {
+  useEffect(() => {
     fetchClients();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchClients = async () => {
     try {
@@ -130,23 +129,28 @@ export default function CreateProjectPage() {
       const uploadedFiles: Array<{ name: string; path: string; size: number }> = [];
       
       for (let i = 0; i < files.length; i++) {
+        const fileItem = files[i];
+        if (!fileItem || !fileItem.file) {
+          throw new Error(`No file at index ${i}`);
+        }
+        
         setFiles(prev => prev.map((f, idx) => 
           idx === i ? { ...f, uploading: true } : f
         ));
-
-        const result = await uploadSecureAsset(files[i].file, 'projects/files');
+        
+        const result = await uploadSecureAsset(fileItem.file, 'projects/files');
         
         if (!result.success) {
           setFiles(prev => prev.map((f, idx) => 
             idx === i ? { ...f, uploading: false, error: result.error } : f
           ));
-          throw new Error(`Failed to upload ${files[i].name}: ${result.error}`);
+          throw new Error(`Failed to upload ${fileItem.name}: ${result.error}`);
         }
 
         uploadedFiles.push({
-          name: files[i].name,
+          name: fileItem.name,
           path: result.path!,
-          size: files[i].size
+          size: fileItem.size
         });
 
         setFiles(prev => prev.map((f, idx) => 

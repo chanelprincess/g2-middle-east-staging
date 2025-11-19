@@ -94,7 +94,7 @@ export default function ClientDashboard() {
     }
   };
 
-  const downloadFile = async (filePath: string, fileName: string) => {
+  const downloadFile = async (filePath: string, _fileName: string) => {
     try {
       const signedUrl = await getSignedUrl(filePath);
       window.open(signedUrl, '_blank');

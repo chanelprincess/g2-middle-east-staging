@@ -13,6 +13,7 @@ export default function CreatePostPage() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [content, setContent] = useState('');
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [featuredImageUrl, setFeaturedImageUrl] = useState('');
   const [isPublished, setIsPublished] = useState(false);
