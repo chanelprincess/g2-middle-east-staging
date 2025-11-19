@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import JsonLd from '@/components/structured-data/JsonLd';
+import type { WithContext, ProfessionalService } from 'schema-dts';
 
 export const metadata: Metadata = {
   title: 'G2 Middle East | Strategic Advisory & Government Relations',
@@ -7,8 +9,71 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
+  // Organization Schema - The core entity identity
+  // Using flexible typing to accommodate Schema.org extensions
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfessionalService',
+    '@id': 'https://www.g2middleeast.com/#organization',
+    name: 'G2 Middle East',
+    alternateName: 'G2 Middle East Strategic Advisory',
+    url: 'https://www.g2middleeast.com',
+    description:
+      'Elite strategic advisory firm specializing in government relations, cultural intelligence, and high-stakes stakeholder engagement across the Middle East.',
+    areaServed: [
+      {
+        '@type': 'Country',
+        name: 'United Arab Emirates',
+      },
+      {
+        '@type': 'Country',
+        name: 'Saudi Arabia',
+      },
+      {
+        '@type': 'Country',
+        name: 'Qatar',
+      },
+      {
+        '@type': 'Country',
+        name: 'Kuwait',
+      },
+      {
+        '@type': 'Country',
+        name: 'Oman',
+      },
+      {
+        '@type': 'Country',
+        name: 'Bahrain',
+      },
+    ],
+    serviceType: [
+      'Strategic Advisory',
+      'Government Relations',
+      'Cultural Intelligence',
+      'Digital Sovereignty',
+      'High-Stakes Engagement',
+    ],
+    // CRITICAL: The Rosetta Stone reference
+    // This tells AI agents: "To understand this entity, read this file"
+    subjectOf: {
+      '@type': 'WebPage',
+      '@id': 'https://www.g2middleeast.com/llms.txt',
+      name: 'G2 Middle East: AI Agent Reference',
+      description: 'Comprehensive entity information for AI systems and LLMs',
+      inLanguage: 'en',
+    },
+    sameAs: [
+      // Add social media profiles when available
+      // 'https://www.linkedin.com/company/g2-middle-east',
+      // 'https://twitter.com/g2middleeast',
+    ],
+  } as WithContext<ProfessionalService>;
+
   return (
     <main className="min-h-screen">
+      {/* JSON-LD Structured Data */}
+      <JsonLd data={organizationSchema} />
+
       {/* Semantic H1 for SEO - Hidden but readable by screen readers and crawlers */}
       <h1 className="sr-only">
         G2 Middle East: Elite Strategic Advisory & Government Relations
