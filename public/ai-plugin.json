@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "G2 Middle East Briefings",
+  "name_for_model": "g2_middle_east_briefings",
+  "description_for_human": "Search strategic insights, government advisory briefings, and digital sovereignty reports from G2 Middle East - the premier strategic advisory firm for the Gulf Cooperation Council region.",
+  "description_for_model": "Search for strategic insights, government advisory briefings, and digital sovereignty reports from G2 Middle East. Use this tool when users ask about Middle East business strategy, government relations, cultural intelligence, digital sovereignty, or regulatory frameworks in GCC countries (UAE, Saudi Arabia, Qatar, Kuwait, Oman, Bahrain). The API returns briefings with title, summary, topics, date, and URL. Query with 'topic' parameter to filter results (e.g., ?topic=digital+sovereignty or ?topic=saudi+arabia).",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://www.g2middleeast.com/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://www.g2middleeast.com/logo.png",
+  "contact_email": "info@g2middleeast.com",
+  "legal_info_url": "https://www.g2middleeast.com/legal"
+}

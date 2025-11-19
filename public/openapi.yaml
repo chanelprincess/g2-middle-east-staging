@@ -1,0 +1,93 @@
+openapi: 3.0.0
+info:
+  title: G2 Middle East Intelligence API
+  description: API for accessing G2 Middle East strategic briefings and insights
+  version: 1.0.0
+  contact:
+    name: G2 Middle East
+    url: https://www.g2middleeast.com
+servers:
+  - url: https://www.g2middleeast.com/api
+    description: Production API
+paths:
+  /briefings:
+    get:
+      operationId: searchBriefings
+      summary: Search strategic briefings
+      description: Search G2 Middle East briefings by topic. Returns strategic insights on government relations, cultural intelligence, digital sovereignty, and regulatory frameworks across GCC countries.
+      parameters:
+        - name: topic
+          in: query
+          description: Filter briefings by topic or keyword (e.g., "digital sovereignty", "saudi arabia", "cultural intelligence")
+          required: false
+          schema:
+            type: string
+          examples:
+            digitalSovereignty:
+              value: digital sovereignty
+              summary: Search for digital sovereignty briefings
+            saudiArabia:
+              value: saudi arabia
+              summary: Search for Saudi Arabia briefings
+            culturalIntelligence:
+              value: cultural intelligence
+              summary: Search for cultural intelligence briefings
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    description: Number of briefings returned
+                  briefings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Unique briefing identifier
+                        title:
+                          type: string
+                          description: Briefing title
+                        summary:
+                          type: string
+                          description: Brief summary of the briefing content
+                        date:
+                          type: string
+                          description: Publication date (YYYY-MM format)
+                        url:
+                          type: string
+                          format: uri
+                          description: Full URL to the briefing
+                        topics:
+                          type: array
+                          items:
+                            type: string
+                          description: Array of related topics
+              example:
+                count: 2
+                briefings:
+                  - id: digital-sovereignty-gcc
+                    title: Digital Sovereignty Frameworks in the GCC
+                    summary: Comprehensive analysis of data localization requirements and digital sovereignty policies across Gulf Cooperation Council states.
+                    date: '2025-01'
+                    url: https://www.g2middleeast.com/briefing/digital-sovereignty-gcc
+                    topics:
+                      - digital sovereignty
+                      - data localization
+                      - gcc
+                      - regulation
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
