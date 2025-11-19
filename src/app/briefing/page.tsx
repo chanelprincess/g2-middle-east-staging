@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { createClient } from '@/utils/supabase/server';
 
 export const metadata: Metadata = {
   title: 'Strategic Briefings',
@@ -7,50 +8,43 @@ export const metadata: Metadata = {
     'Strategic insights on government relations, cultural intelligence, digital sovereignty, and regulatory frameworks across the Middle East.',
 };
 
-const briefings = [
-  {
-    id: 'digital-sovereignty-gcc',
-    title: 'Digital Sovereignty Frameworks in the GCC',
-    summary:
-      'Comprehensive analysis of data localization requirements and digital sovereignty policies across Gulf Cooperation Council states.',
-    date: 'January 2025',
-    topics: ['Digital Sovereignty', 'Data Localization', 'GCC', 'Regulation'],
-  },
-  {
-    id: 'cultural-intelligence-market-entry',
-    title: 'Cultural Intelligence for Middle East Market Entry',
-    summary:
-      'Strategic framework for understanding cultural dynamics in Middle Eastern business environments.',
-    date: 'January 2025',
-    topics: ['Cultural Intelligence', 'Market Entry', 'Stakeholder Engagement'],
-  },
-  {
-    id: 'government-relations-saudi-vision',
-    title: 'Government Relations Strategy: Saudi Vision 2030',
-    summary:
-      'Analysis of Saudi Vision 2030 policy initiatives and strategic guidance for government engagement.',
-    date: 'December 2024',
-    topics: ['Government Relations', 'Saudi Arabia', 'Vision 2030', 'Policy'],
-  },
-  {
-    id: 'high-stakes-negotiation-mena',
-    title: 'High-Stakes Negotiation in MENA Markets',
-    summary:
-      'Strategic counsel for complex negotiations in Middle East and North Africa region.',
-    date: 'November 2024',
-    topics: ['Negotiation', 'High-Stakes', 'MENA', 'Strategy'],
-  },
-  {
-    id: 'uae-regulatory-landscape',
-    title: 'UAE Regulatory Landscape 2025',
-    summary:
-      'Overview of United Arab Emirates regulatory environment and compliance frameworks.',
-    date: 'December 2024',
-    topics: ['UAE', 'Regulation', 'Compliance', 'Licensing'],
-  },
-];
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default function BriefingPage() {
+interface Post {
+  id: number;
+  slug: string;
+  title: string;
+  summary: string;
+  featured_image_url: string | null;
+  published_at: string;
+  view_count: number;
+}
+
+async function getPosts(): Promise<Post[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('id, slug, title, summary, featured_image_url, published_at, view_count')
+      .eq('is_published', true)
+      .not('published_at', 'is', null)
+      .order('published_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching posts:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getPosts:', error);
+    return [];
+  }
+}
+
+export default async function BriefingPage() {
+  const posts = await getPosts();
   return (
     <main className="min-h-screen bg-g2-darker">
       {/* Header */}
@@ -68,37 +62,57 @@ export default function BriefingPage() {
 
       {/* Briefings Grid */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid gap-8 max-w-5xl mx-auto">
-          {briefings.map((briefing) => (
-            <Link
-              key={briefing.id}
-              href={`/briefing/${briefing.id}`}
-              className="block bg-g2-dark border border-white/10 hover:border-g2-gold/30 rounded-2xl p-8 transition-colors group"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-g2-gold group-hover:text-g2-gold-light mb-2 transition-colors">
-                    {briefing.title}
-                  </h2>
-                  <p className="text-sm text-gray-500">{briefing.date}</p>
+        {posts.length === 0 ? (
+          <div className="max-w-5xl mx-auto text-center py-16">
+            <div className="inline-block p-6 bg-g2-dark rounded-full mb-6">
+              <svg className="w-16 h-16 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-3">
+              No Briefings Available
+            </h2>
+            <p className="text-gray-400">
+              Intelligence briefings are currently being prepared. Check back soon.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-8 max-w-5xl mx-auto">
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/briefing/${post.slug}`}
+                className="block bg-g2-dark border border-white/10 hover:border-g2-gold/30 rounded-2xl p-8 transition-colors group"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h2 className="text-2xl font-bold text-g2-gold group-hover:text-g2-gold-light mb-2 transition-colors">
+                      {post.title}
+                    </h2>
+                    <p className="text-sm text-gray-500">
+                      {new Date(post.published_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <p className="text-gray-300 mb-4 leading-relaxed">{briefing.summary}</p>
-              <div className="flex flex-wrap gap-2">
-                {briefing.topics.map((topic) => (
-                  <span
-                    key={topic}
-                    className="px-3 py-1 bg-g2-darker border border-white/10 rounded-full text-xs text-gray-400"
-                  >
-                    {topic}
+                <p className="text-gray-300 mb-4 leading-relaxed">{post.summary}</p>
+                <div className="flex items-center justify-between">
+                  <span className="inline-block text-g2-gold group-hover:text-g2-gold-light transition-colors">
+                    Read Briefing →
                   </span>
-                ))}
-              </div>
-              <span className="inline-block mt-4 text-g2-gold group-hover:text-g2-gold-light transition-colors">
-                Read Briefing →
-              </span>
-            </Link>
-          ))}
+                  {post.view_count > 0 && (
+                    <span className="text-xs text-gray-500">
+                      {post.view_count} views
+                    </span>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
         </div>
 
         {/* API Access Note */}
