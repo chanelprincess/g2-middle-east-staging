@@ -209,11 +209,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">LIVE COMMUNICATION</span>
                   </div>
@@ -239,11 +239,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">LUXURY EXPERIENCES</span>
                   </div>
@@ -269,11 +269,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">MUSIC & ENTERTAINMENT</span>
                   </div>
@@ -299,11 +299,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">CULTURAL EVENTS</span>
                   </div>
@@ -329,11 +329,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">SCIENTIFIC EVENTS</span>
                   </div>
@@ -359,11 +359,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">DIGITAL STRATEGY</span>
                   </div>
@@ -389,11 +389,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">CONTENT PRODUCTION</span>
                   </div>
@@ -419,11 +419,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">FILM PRODUCTION</span>
                   </div>
@@ -449,11 +449,11 @@ export default function GroupPage() {
                     height="600"
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
-                    style="opacity: 0.7; filter: brightness(92%) grayscale(20%);"
+                    style={{opacity: 0.7, filter: "brightness(92%) grayscale(20%)"}}
                   />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-g2-darker transition-opacity duration-500 group-hover:opacity-70"></div>
                 </div>
-                <div className="p-8 flex flex-col" style="min-height: 320px;">
+                <div className="p-8 flex flex-col" style={{minHeight: "320px"}}>
                   <div className="mb-6">
                     <span className="text-g2-gold text-xs font-semibold uppercase tracking-wider">VIDEO PRODUCTION</span>
                   </div>
