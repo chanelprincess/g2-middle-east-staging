@@ -11,10 +11,7 @@
     "vercel:staging": "vercel --name g2-middle-east-staging",
     "vercel:prod": "vercel --prod",
     "deploy:staging": "vercel --name g2-middle-east-staging",
-    "deploy:production": "vercel --prod --name g2-middle-east-production",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "pages:deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
-    "pages:dev": "npx @cloudflare/next-on-pages --watch"
+    "deploy:production": "vercel --prod --name g2-middle-east-production"
   },
   "dependencies": {
     "@supabase/ssr": "^0.7.0",
