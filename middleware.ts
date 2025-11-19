@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
     if (user) {
       // User is already logged in - redirect based on role
       try {
-        const supabase = createClient();
+        const supabase = await createClient();
         const { data: profile } = await supabase
           .from('profiles')
           .select('role')
@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
 
     try {
       // Check if user is admin
-      const supabase = createClient();
+      const supabase = await createClient();
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('role')
