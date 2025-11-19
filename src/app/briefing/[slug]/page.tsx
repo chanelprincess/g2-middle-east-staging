@@ -1,212 +1,207 @@
 import { notFound } from 'next/navigation';
+import { createClient } from '@/utils/supabase/server';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
-interface BriefingPageProps {
-  params: Promise<{
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+interface BlogPostPageProps {
+  params: {
     slug: string;
-  }>;
+  };
 }
 
-// Mock briefing data - matches API data structure
-const briefings = {
-  'digital-sovereignty-gcc': {
-    id: 'digital-sovereignty-gcc',
-    title: 'Digital Sovereignty Frameworks in the GCC',
-    subtitle: 'Data localization and technology governance across Gulf states',
-    summary:
-      'Comprehensive analysis of data localization requirements, cloud service regulations, and digital sovereignty policies across Gulf Cooperation Council states. Examines UAE, Saudi Arabia, and Qatar frameworks for technology governance.',
-    date: 'January 2025',
-    content: `
-## Executive Summary
+interface Post {
+  id: number;
+  slug: string;
+  title: string;
+  summary: string;
+  content: string;
+  featured_image_url: string | null;
+  published_at: string;
+  view_count: number;
+}
 
-Digital sovereignty has emerged as a critical strategic priority for Gulf Cooperation Council (GCC) states. This briefing examines the evolving regulatory frameworks for data localization, cloud services, and technology governance across the region.
+async function getPost(slug: string): Promise<Post | null> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('slug', slug)
+      .eq('is_published', true)
+      .single();
 
-## Key Findings
+    if (error || !data) {
+      return null;
+    }
 
-### United Arab Emirates
-The UAE has implemented comprehensive data protection frameworks including the Dubai International Financial Centre (DIFC) Data Protection Law and federal data regulations. Organizations operating in the UAE must understand data residency requirements and cross-border transfer restrictions.
+    // Increment view count
+    await supabase
+      .from('posts')
+      .update({ view_count: data.view_count + 1 })
+      .eq('id', data.id);
 
-### Kingdom of Saudi Arabia
-Saudi Arabia's Personal Data Protection Law (PDPL) establishes strict requirements for data localization and processing. Organizations must comply with National Cybersecurity Authority (NCA) regulations and Cloud Computing Regulatory Framework.
+    return data;
+  } catch (error) {
+    console.error('Error fetching post:', error);
+    return null;
+  }
+}
 
-### Qatar
-Qatar has developed robust data protection frameworks aligned with international standards while maintaining sovereignty over critical data infrastructure. The Qatar Financial Centre (QFC) provides specific guidance for financial services data.
+export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+  const post = await getPost(params.slug);
 
-## Strategic Recommendations
-
-Organizations operating in GCC markets should:
-
-1. Conduct comprehensive data mapping across jurisdictions
-2. Implement region-specific data residency solutions
-3. Engage with regulatory authorities early in planning
-4. Build relationships with local cloud service providers
-5. Develop cultural intelligence around data sovereignty priorities
-
-## Regulatory Landscape
-
-The GCC digital sovereignty landscape continues to evolve rapidly. Organizations must monitor regulatory developments and adapt compliance strategies accordingly.
-    `,
-  },
-  'cultural-intelligence-market-entry': {
-    id: 'cultural-intelligence-market-entry',
-    title: 'Cultural Intelligence for Middle East Market Entry',
-    subtitle: 'Strategic framework for successful regional operations',
-    summary:
-      'Strategic framework for understanding cultural dynamics in Middle Eastern business environments. Covers relationship building, decision-making processes, and stakeholder engagement strategies essential for successful market entry.',
-    date: 'January 2025',
-    content: `
-## Overview
-
-Cultural intelligence is the foundation of successful operations in Middle Eastern markets. This briefing provides strategic guidance for organizations entering or expanding in the region.
-
-## Key Principles
-
-### Relationship-First Approach
-Middle Eastern business culture prioritizes relationship building over transactional interactions. Organizations must invest time in cultivating trust and understanding with stakeholders.
-
-### Decision-Making Processes
-Understanding organizational hierarchies and decision-making authority is essential. Patience and respect for cultural protocols facilitate successful outcomes.
-
-### Stakeholder Mapping
-Comprehensive stakeholder analysis identifies key decision-makers, influencers, and relationship networks critical to market entry success.
-
-## Strategic Recommendations
-
-Organizations should:
-
-1. Invest in cultural training for teams
-2. Engage local advisors with deep regional expertise
-3. Respect cultural protocols and timing
-4. Build long-term relationship strategies
-5. Understand religious and cultural sensitivities
-    `,
-  },
-  // Add other briefings as needed
-};
-
-export async function generateMetadata({
-  params,
-}: BriefingPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const briefing = briefings[slug as keyof typeof briefings];
-
-  if (!briefing) {
+  if (!post) {
     return {
-      title: 'Briefing Not Found',
+      title: 'Post Not Found',
     };
   }
 
-  // Dynamic OG image using our API
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(
-    briefing.title
-  )}&subtitle=${encodeURIComponent(briefing.subtitle)}`;
-
   return {
-    title: briefing.title,
-    description: briefing.summary,
+    title: post.title,
+    description: post.summary,
     openGraph: {
-      title: briefing.title,
-      description: briefing.summary,
-      type: 'article',
-      url: `https://www.g2middleeast.com/briefing/${slug}`,
-      images: [
-        {
-          url: ogImageUrl,
-          width: 1200,
-          height: 630,
-          alt: briefing.title,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: briefing.title,
-      description: briefing.summary,
-      images: [ogImageUrl],
+      title: post.title,
+      description: post.summary,
+      images: post.featured_image_url ? [post.featured_image_url] : [],
     },
   };
 }
 
-export default async function BriefingPage({ params }: BriefingPageProps) {
-  const { slug } = await params;
-  const briefing = briefings[slug as keyof typeof briefings];
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = await getPost(params.slug);
 
-  if (!briefing) {
+  if (!post) {
     notFound();
   }
 
+  // Simple markdown to HTML converter (basic implementation)
+  const formatContent = (markdown: string) => {
+    return markdown
+      .split('\n')
+      .map(line => {
+        // Headers
+        if (line.startsWith('### ')) {
+          return `<h3 class="text-xl font-bold text-g2-gold mt-8 mb-4">${line.slice(4)}</h3>`;
+        }
+        if (line.startsWith('## ')) {
+          return `<h2 class="text-2xl font-bold text-g2-gold mt-10 mb-4">${line.slice(3)}</h2>`;
+        }
+        if (line.startsWith('# ')) {
+          return `<h1 class="text-3xl font-bold text-g2-gold mt-12 mb-6">${line.slice(2)}</h1>`;
+        }
+        
+        // Bold and italic
+        let formatted = line
+          .replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+          .replace(/\*(.+?)\*/g, '<em class="italic">$1</em>');
+        
+        // Lists
+        if (line.startsWith('- ')) {
+          return `<li class="ml-6 mb-2 list-disc">${formatted.slice(2)}</li>`;
+        }
+        if (/^\d+\. /.test(line)) {
+          return `<li class="ml-6 mb-2 list-decimal">${formatted.replace(/^\d+\. /, '')}</li>`;
+        }
+        
+        // Links
+        formatted = formatted.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-g2-gold hover:text-g2-gold-light underline">$1</a>');
+        
+        // Empty lines
+        if (line.trim() === '') {
+          return '<br />';
+        }
+        
+        // Regular paragraphs
+        return `<p class="mb-4 leading-relaxed">${formatted}</p>`;
+      })
+      .join('\n');
+  };
+
   return (
     <main className="min-h-screen bg-g2-darker">
-      {/* Header with back link */}
+      {/* Header */}
       <div className="border-b border-white/10 bg-g2-dark">
-        <div className="container mx-auto px-6 py-4">
+        <div className="container mx-auto px-6 py-8">
           <Link
             href="/briefing"
-            className="inline-flex items-center text-g2-gold hover:text-g2-gold-light transition-colors"
+            className="inline-flex items-center text-gray-400 hover:text-g2-gold transition-colors mb-6"
           >
-            ← Back to Briefings
+            <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back to Briefings
           </Link>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-g2-gold mb-4">
+            {post.title}
+          </h1>
+          
+          <div className="flex items-center gap-4 text-sm text-gray-400">
+            <time dateTime={post.published_at}>
+              {new Date(post.published_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+            {post.view_count > 0 && (
+              <>
+                <span>•</span>
+                <span>{post.view_count} views</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Briefing Content */}
+      {/* Featured Image */}
+      {post.featured_image_url && (
+        <div className="w-full h-96 relative border-b border-white/10">
+          <img
+            src={post.featured_image_url}
+            alt={post.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Content */}
       <article className="container mx-auto px-6 py-16">
         <div className="max-w-4xl mx-auto">
-          {/* Header */}
-          <header className="mb-12">
-            <p className="text-g2-gold text-sm font-semibold mb-4 uppercase tracking-wider">
-              Strategic Briefing
-            </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              {briefing.title}
-            </h1>
-            <p className="text-xl text-gray-400 mb-6">{briefing.subtitle}</p>
-            <div className="flex items-center gap-4 text-sm text-gray-500">
-              <time>{briefing.date}</time>
-            </div>
-          </header>
-
           {/* Summary */}
-          <div className="bg-g2-dark border border-white/10 rounded-2xl p-8 mb-12">
-            <h2 className="text-xl font-bold text-g2-gold mb-4">Summary</h2>
-            <p className="text-gray-300 leading-relaxed">{briefing.summary}</p>
+          <div className="text-xl text-gray-300 mb-12 pb-8 border-b border-white/10 italic">
+            {post.summary}
           </div>
 
           {/* Main Content */}
-          <div className="prose prose-invert prose-lg max-w-none">
-            <div
-              className="text-gray-300"
-              dangerouslySetInnerHTML={{
-                __html: briefing.content
-                  .split('\n')
-                  .map((line) => {
-                    if (line.startsWith('## '))
-                      return `<h2 class="text-3xl font-bold text-g2-gold mt-12 mb-6">${line.slice(
-                        3
-                      )}</h2>`;
-                    if (line.startsWith('### '))
-                      return `<h3 class="text-2xl font-bold text-white mt-8 mb-4">${line.slice(
-                        4
-                      )}</h3>`;
-                    if (line.trim().match(/^\d+\./))
-                      return `<li class="ml-6 mb-2">${line.trim()}</li>`;
-                    if (line.trim()) return `<p class="mb-4">${line.trim()}</p>`;
-                    return '';
-                  })
-                  .join(''),
-              }}
-            />
+          <div 
+            className="prose prose-invert prose-lg max-w-none text-gray-300"
+            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+          />
+
+          {/* Footer */}
+          <div className="mt-16 pt-8 border-t border-white/10">
+            <div className="bg-g2-dark border border-g2-gold/30 rounded-2xl p-8">
+              <h3 className="text-xl font-bold text-g2-gold mb-4">
+                About G2 Middle East
+              </h3>
+              <p className="text-gray-300 mb-6">
+                G2 Middle East provides strategic advisory services focused on government relations, 
+                cultural intelligence, and high-stakes stakeholder engagement across the Middle East region.
+              </p>
+              <Link
+                href="/"
+                className="inline-block px-6 py-3 bg-g2-gold text-g2-darker font-semibold rounded-lg hover:bg-g2-gold-light transition-colors"
+              >
+                Learn More About Our Services
+              </Link>
+            </div>
           </div>
         </div>
       </article>
     </main>
   );
-}
-
-// Generate static params for all briefings
-export function generateStaticParams() {
-  return Object.keys(briefings).map((slug) => ({
-    slug,
-  }));
 }
