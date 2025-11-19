@@ -5,6 +5,9 @@ import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import type { FormEvent } from 'react';
 
+// Force dynamic rendering - don't prerender at build time
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
